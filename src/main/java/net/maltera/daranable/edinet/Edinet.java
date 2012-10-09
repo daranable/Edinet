@@ -10,15 +10,12 @@ import javax.swing.JLabel;
  *
  */
 public class Edinet 
-extends javax.swing.JFrame
-{
-	public Edinet( String name )
-	{
+extends javax.swing.JFrame {
+	public Edinet( String name ) {
 		super( name );
 	}
 	
-    public static void main( String[] args )
-    {
+    public static void main( String[] args ) {
         Edinet frame = new Edinet( "Hello, World!" );
         
         frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
