@@ -15,7 +15,7 @@ CREATE TABLE courses (
 	teacher VARCHAR (256),
 	name VARCHAR (128),
 	color INTEGER (32),
-	note CLOB,
+	notes CLOB,
 	
 	CONSTRAINT ref_term
 		FOREIGN KEY (year, term)
