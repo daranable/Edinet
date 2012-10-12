@@ -7,8 +7,8 @@ import java.sql.SQLException;
 public class Term 
 extends TermReference {
 	private String name;
-	private Date start, end;
-	private boolean name_dirty, start_dirty, end_dirty;
+	private Date start, finish;
+	private boolean name_dirty, start_dirty, finish_dirty;
 	
 	private Term( int year, int serial ) {
 		super( year, serial );
@@ -22,7 +22,7 @@ extends TermReference {
 		inst.name = result.getString( "name" );
 		
 		inst.start = result.getDate( "start" );
-		inst.end = result.getDate( "end" );
+		inst.finish = result.getDate( "finish" );
 		
 		return null;
 	}
@@ -50,13 +50,13 @@ extends TermReference {
 	}
 	
 	public Date getEndDate() {
-		return (Date) end.clone();
+		return (Date) finish.clone();
 	}
 	
 	public void setEndDate( Date end ) {
-		if ( this.end.equals( end ) ) return;
+		if ( this.finish.equals( end ) ) return;
 		
-		this.end = (Date) end.clone();
-		this.end_dirty = true;
+		this.finish = (Date) end.clone();
+		this.finish_dirty = true;
 	}
 }
