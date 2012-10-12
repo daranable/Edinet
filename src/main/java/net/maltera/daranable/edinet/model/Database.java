@@ -33,15 +33,22 @@ public class Database {
 	
 	public Database() 
 	throws DatabaseVersionException, SQLException, IOException {
-		connection = DriverManager.getConnection( 
-				"jdbc:hsqldb:file:" + getDataDir().getPath() + "/edinet" );
-		
+		if (!new File( getDbPath() + ".script" ).isFile()) {
+			connection = DriverManager.getConnection(
+					"jdbc:hsqldb:file:" + getDbPath() );
+			loadSchema();
+			return;
+		}
+	
+		connection = DriverManager.getConnection(
+				"jdbc:hsqldb:file:" + getDbPath() + ";create=false" );
+	
 		try {
 			final ResultSet result =
 					connection.createStatement().executeQuery(
 							"SELECT value \n" +
 							"FROM properties \n" +
-							"WHERE key='schema.version'" );
+							"WHERE name='schema.version'" );
 			
 			if (!result.next())
 				throw new DatabaseVersionException(
@@ -52,8 +59,14 @@ public class Database {
 				throw new DatabaseVersionException(
 						"database is version " + version + ", expected 0" );
 		} catch (SQLException caught) {
-			loadSchema();
+			throw new DatabaseVersionException(
+					"the database exists but uses an unknown schema" );
 		}
+	}
+	
+	private static String getDbPath()
+	throws FileNotFoundException {
+		return getDataDir().getPath() + "/edinet";
 	}
 		
 	private static File getDataDir() 
