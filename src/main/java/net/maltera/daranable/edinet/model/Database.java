@@ -18,6 +18,10 @@ import org.hsqldb.cmdline.SqlToolError;
 public class Database {
 	private Connection connection;
 	
+	static {
+		System.setProperty( "edinet.appdata", System.getenv( "APPDATA" ) );
+	}
+	
 	public static class DatabaseVersionException
 	extends Exception {
 		private static final long serialVersionUID = 7912832417861134988L;
@@ -30,12 +34,12 @@ public class Database {
 	public Database() 
 	throws DatabaseVersionException, SQLException, IOException {
 		connection = DriverManager.getConnection( 
-				"jdbc:hsqldb:file:" + getDataDir().getPath() );
+				"jdbc:hsqldb:file:" + getDataDir().getPath() + "/edinet" );
 		
 		try {
 			final ResultSet result =
 					connection.createStatement().executeQuery(
-							"SELECT value AS version \n" +
+							"SELECT value \n" +
 							"FROM properties \n" +
 							"WHERE key='schema.version'" );
 			
@@ -57,7 +61,7 @@ public class Database {
 		File homeDir;
 		
 		if ( System.getProperty( "os.name" ).contains( "Windows" ) ) {
-			homeDir = new File( System.getenv( "APPDATA" ) );
+			homeDir = new File( System.getProperty( "edinet.appdata" ) );
 			if ( !homeDir.isDirectory() )
 				throw new FileNotFoundException( 
 						"user's Application Data directory "
@@ -105,5 +109,11 @@ public class Database {
 	
 	public Connection getConnection() {
 		return connection;
+	}
+	
+	public void shutdown()
+	throws SQLException {
+		connection.createStatement().execute( "SHUTDOWN" );
+		connection.close();
 	}
 }
