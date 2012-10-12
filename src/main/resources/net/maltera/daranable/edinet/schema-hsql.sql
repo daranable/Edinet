@@ -1,37 +1,37 @@
 CREATE TABLE properties (
-	name VARCHAR (128) NOT NULL IDENTITY PRIMARY KEY,
+	name VARCHAR (128) NOT NULL PRIMARY KEY,
 	value VARCHAR (256)
 );
 
-INSERT INTO properties (key, value) VALUES ('schema.version', '0');
+INSERT INTO properties (name, value) VALUES ('schema.version', '0');
 
 CREATE TABLE terms (
 	year SMALLINT NOT NULL,
 	serial SMALLINT NOT NULL,
 	name VARCHAR (128) NOT NULL,
 	start DATE,
-	'end' DATE,
+	finish DATE,
 	
 	PRIMARY KEY (year, serial)
-)
+);
 
 CREATE TABLE courses (
-	id INTEGER NOT NULL IDENTITY PRIMARY KEY,
+	id INTEGER NOT NULL PRIMARY KEY IDENTITY,
 	year SMALLINT NOT NULL,
 	term SMALLINT NOT NULL,
 	teacher VARCHAR (256),
 	name VARCHAR (128),
-	color INTEGER (32),
+	color INTEGER,
 	notes CLOB,
 	
 	CONSTRAINT ref_term
 		FOREIGN KEY (year, term)
 		REFERENCES terms (year, serial)
 		ON UPDATE CASCADE
-)
+);
 
 CREATE TABLE assignments (
-	id INTEGER NOT NULL IDENTITY PRIMARY KEY,
+	id INTEGER NOT NULL PRIMARY KEY IDENTITY,
 	course_id INTEGER NOT NULL,
 	title VARCHAR (256),
 	description CLOB,
@@ -46,4 +46,4 @@ CREATE TABLE assignments (
 		FOREIGN KEY (course_id)
 		REFERENCES courses (id)
 		ON UPDATE CASCADE
-)
+);
