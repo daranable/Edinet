@@ -48,7 +48,7 @@ public class Repository {
 					"WHERE course.id = ?" );
 		}
 		
-		stmtCourseById.setInt( 0, id );
+		stmtCourseById.setInt( 1, id );
 		ResultSet result = stmtCourseById.executeQuery();
 		if (!result.next()) return null;
 		
@@ -72,7 +72,7 @@ public class Repository {
 					"WHERE assignment.id = ?" );
 		}
 		
-		stmtAssignmentById.setInt( 0, id );
+		stmtAssignmentById.setInt( 1, id );
 		ResultSet result = stmtAssignmentById.executeQuery();
 		if (!result.next()) return null;
 		
@@ -96,14 +96,17 @@ public class Repository {
 					"WHERE term.year = ? AND term.serial = ?" );
 		}
 		
-		stmtTermByReference.setInt( 0, ref.getYear() );
-		stmtTermByReference.setInt( 1, ref.getSerial() );
+		stmtTermByReference.setInt( 1, ref.getYear() );
+		stmtTermByReference.setInt( 2, ref.getSerial() );
 		ResultSet result = stmtTermByReference.executeQuery();
 		if (!result.next()) return null;
 		
 		Term inst = Term.load( this, result );
-		// FIXME: implement TermReference.hashCode() to make this work
 		terms.put( inst, new SoftReference<Term>( inst ) );
 		return inst;
+	}
+	
+	public Database getDatabase() {
+		return database;
 	}
 }
