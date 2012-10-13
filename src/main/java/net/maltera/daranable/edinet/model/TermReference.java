@@ -2,7 +2,7 @@ package net.maltera.daranable.edinet.model;
 
 public class TermReference 
 implements Comparable<TermReference> {
-	protected final int year, serial;
+	protected int year, serial;
 	
 	public TermReference( int year, int serial ) {
 		this.year = year;
