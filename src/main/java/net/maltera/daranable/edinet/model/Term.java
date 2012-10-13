@@ -168,5 +168,9 @@ extends TermReference {
 		stmt.setInt( 5, serial );
 		
 		stmt.execute();
+		
+		this.name_dirty = false;
+		this.start_dirty = false;
+		this.finish_dirty = false;
 	}
 }
