@@ -51,10 +51,13 @@ public class TestDatabaseInitialization {
 		
 		database.shutdown();
 		database = new Database();
-		
+
 		ResultSet result =
 				database.getConnection().createStatement().executeQuery(
 						"SELECT value FROM properties WHERE name='test'" );
+		if (!result.next()) fail( "no results returned" );
 		assertEquals( "saved value", "foo", result.getString( "value" ) );
+		
+		database.shutdown();
 	}
 }
