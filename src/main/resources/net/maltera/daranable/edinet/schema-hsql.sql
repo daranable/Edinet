@@ -21,6 +21,7 @@ CREATE TABLE courses (
 	term SMALLINT NOT NULL,
 	teacher VARCHAR (256),
 	name VARCHAR (128),
+	abbreviation VARCHAR (16) NOT NULL,
 	color INTEGER,
 	notes CLOB,
 	
