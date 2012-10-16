@@ -88,4 +88,69 @@ public class TestCourses {
 		
 		database.shutdown();
 	}
+	
+	@Test
+	public void testUpdateCourse() 
+	throws Exception {
+		Repository repo = new Repository();
+		Database database = repo.getDatabase();
+		Date startDate = new Date();
+		
+		// Create the new Term to use with my course.
+		Term term = Term.create( repo );
+		
+		// Set it's default values
+		term.setYear( 2012 );
+		term.setName( "Fall" );
+		term.setStartDate( startDate );
+		
+		// Push its values to the db
+		term.commit();
+		
+		Color color = new Color( 0, 255, 0 );
+		
+		// Create a new course.
+		Course course = Course.create( repo );
+		
+		course.setTermReference( term );
+		course.setTeacher( "Ceto" );
+		course.setName( "Underwater Basket Weaving 101" );
+		course.setAbbreviation( "UBW-101" );
+		course.setColor( color );
+		course.setNotes( "Basic information on making baskets under water." );
+		
+		course.commit();
+		
+		course.setTeacher( "Poseidon" );
+		course.setName( "Underwater Basket Weaving 201 - In Space" );
+		course.setAbbreviation( "UBW-201" );
+		course.setColor( color );
+		course.setNotes( "Intermediate information on making baskets under " +
+				"water in space." );
+		
+		course.commit();
+		
+		int courseId = course.getId();
+		
+		// Get rid of the reference
+		course = null;
+		
+		// Pull it from database to check it committed.
+		course = repo.getCourse( courseId );
+		
+		assertTrue( "course is null", null != course );
+		
+		assertTrue( "Term does not match", 
+				course.getTermRef().equals( term ) );
+		assertEquals( "Poseidon", course.getTeacher() );
+		assertEquals( "Underwater Basket Weaving 201 - In Space", 
+				course.getName() );
+		assertEquals( "UBW-201", course.getAbbreviation() );
+		assertTrue( "Color does not match", 
+				color.equals( course.getColor() ) );
+		assertEquals( "Intermediate information on making baskets under " +
+				"water in space.", course.getNotes() );
+		
+		database.shutdown();
+	}
 }
