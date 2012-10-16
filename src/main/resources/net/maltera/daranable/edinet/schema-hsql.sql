@@ -34,7 +34,7 @@ CREATE TABLE courses (
 CREATE TABLE assignments (
 	id INTEGER NOT NULL PRIMARY KEY IDENTITY,
 	course_id INTEGER NOT NULL,
-	title VARCHAR (256),
+	title VARCHAR (256) NOT NULL,
 	description CLOB,
 	time_estimate INTEGER,
 	time_worked INTEGER,
