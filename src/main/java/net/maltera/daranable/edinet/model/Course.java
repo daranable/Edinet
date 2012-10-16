@@ -194,5 +194,32 @@ public class Course {
 		if ( !termRef_dirty && !teacher_dirty && !notes_dirty && !name_dirty
 				&& !notes_dirty && !color_dirty && !abbreviation_dirty ) return;
 		
+		Connection connection = repo.getDatabase().getConnection();
+		PreparedStatement stmt;
+		
+		stmt = connection.prepareStatement( 
+				"UPDATE courses \n" +
+				"SET year = ?, term = ?, teacher = ?, name = ?, \n" +
+				"abbreviation = ?, color = ?" +
+				( this.notes_dirty ? ", notes = ? \n" : " \n" )+
+				"WHERE id = ?" );
+		
+		stmt.setInt( 1, termRef.getYear() );
+		stmt.setInt( 2, termRef.getSerial() );
+		stmt.setString( 3, teacher );
+		stmt.setString( 4, name );
+		stmt.setString( 5, abbreviation );
+		stmt.setInt( 6, color.getRGB() );
+		if ( notes_dirty ) {
+			Clob clob = connection.createClob();
+			clob.setString( 1, notes );
+			
+			stmt.setClob( 7, clob );
+			stmt.setInt( 8, id );
+		} else {
+			stmt.setInt( 7, id );
+		}
+		
+		stmt.executeUpdate();
 	}
 }
