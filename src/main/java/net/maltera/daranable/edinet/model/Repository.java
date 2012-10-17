@@ -1,11 +1,7 @@
 package net.maltera.daranable.edinet.model;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,6 +9,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import net.maltera.daranable.edinet.model.Database.DatabaseVersionException;
+import net.maltera.daranable.edinet.model.sort.RecordFactory;
 
 import com.google.common.collect.Maps;
 
@@ -36,7 +33,7 @@ public class Repository {
 	private PreparedStatement stmtCourseById;
 	
 	public Course getCourse( int id ) 
-	throws SQLException, IOException {
+	throws SQLException {
 		SoftReference<Course> cached = courses.get( id );
 		if (null != cached && null != cached.get())
 			return cached.get();
@@ -60,7 +57,7 @@ public class Repository {
 	private PreparedStatement stmtAssignmentById;
 	
 	public Assignment getAssignment( int id )
-	throws SQLException, IOException {
+	throws SQLException {
 		SoftReference<Assignment> cached = assignments.get( id );
 		if (null != cached && null != cached.get())
 			return cached.get();
@@ -84,7 +81,7 @@ public class Repository {
 	private PreparedStatement stmtTermByReference;
 	
 	public Term getTerm( TermReference ref )
-	throws SQLException, IOException {
+	throws SQLException {
 		SoftReference<Term> cached = terms.get( ref );
 		if (null != cached && null != cached.get())
 			return cached.get();
@@ -104,6 +101,25 @@ public class Repository {
 		Term inst = Term.load( this, result );
 		terms.put( inst, new SoftReference<Term>( inst ) );
 		return inst;
+	}
+	
+	public RecordFactory<Term> getAllTerms() {
+		return new RecordFactory<Term>() {
+			@Override
+			protected PreparedStatement prepareStatement() 
+			throws SQLException {
+				return database.getConnection().prepareStatement( 
+						"SELECT year, serial \n" +
+						"FROM terms \n" );
+			}
+
+			@Override
+			protected Term transform( ResultSet result )
+			throws SQLException {
+				return Repository.this.getTerm( new TermReference( 
+						result.getInt( "year" ), result.getInt( "serial" ) ) );
+			}
+		};
 	}
 	
 	public Database getDatabase() {

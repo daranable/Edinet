@@ -11,6 +11,8 @@ import javax.swing.JLabel;
  */
 public class Edinet 
 extends javax.swing.JFrame {
+	private static final long serialVersionUID = 7201066342122775149L;
+
 	public Edinet( String name ) {
 		super( name );
 	}
