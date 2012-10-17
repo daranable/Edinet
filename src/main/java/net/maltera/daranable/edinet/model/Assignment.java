@@ -1,6 +1,5 @@
 package net.maltera.daranable.edinet.model;
 
-import java.io.IOException;
 import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,8 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
-
-import com.google.common.io.CharStreams;
 
 public class Assignment {
 	private int id;
@@ -29,7 +26,7 @@ public class Assignment {
 	}
 	
 	public static Assignment load( Repository repo, ResultSet result ) 
-	throws SQLException, IOException {
+	throws SQLException {
 		final Assignment inst = new Assignment( result.getInt( "id" ) );
 		
 		inst.time_estimate = result.getInt( "time_estimate" );
@@ -44,8 +41,8 @@ public class Assignment {
 		inst.title = result.getString( "title" );
 		
 		Clob description = result.getClob( "description" );
-		inst.description = CharStreams.toString( 
-				description.getCharacterStream() );
+		inst.description =
+				description.getSubString( 1, (int) description.length() );
 		
 		inst.in_database = true;
 		inst.estimate_in_database = ( inst.time_estimate != 0 );
@@ -55,8 +52,7 @@ public class Assignment {
 		return inst;
 	}
 	
-	public static Assignment create( Repository repo ) 
-	throws SQLException, IOException {
+	public static Assignment create( Repository repo ) {
 		final Assignment inst = new Assignment( -1 );
 		
 		inst.in_database = false;

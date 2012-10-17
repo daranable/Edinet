@@ -1,15 +1,12 @@
 package net.maltera.daranable.edinet.model;
 
 import java.awt.Color;
-import java.io.IOException;
 import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
-import com.google.common.io.CharStreams;
 
 public class Course {
 	private int id;
@@ -26,7 +23,7 @@ public class Course {
 	}
 	
 	public static Course load( Repository repo, ResultSet result ) 
-	throws SQLException, IOException {
+	throws SQLException {
 		final Course inst = new Course( result.getInt( "id" ) );
 		
 		
@@ -38,7 +35,7 @@ public class Course {
 		inst.teacher = result.getString( "teacher" );
 		
 		Clob notes = result.getClob( "notes" );
-		inst.notes = CharStreams.toString( notes.getCharacterStream() );
+		inst.notes = notes.getSubString( 1, (int) notes.length() );
 		notes.free();
 		
 		int colorInt = result.getInt( "color" );
