@@ -237,6 +237,14 @@ public class Assignment {
 		if ( !result.next() ) return;
 		
 		this.id = result.getInt( "id" );
+		this.course_dirty = false;
+		this.description_dirty = false;
+		this.title_dirty = false;
+		this.time_estimate_dirty = false;
+		this.time_worked_dirty = false;
+		this.assigned_dirty = false;
+		this.due_dirty = false;
+		this.completed_dirty = false;
 		
 		this.in_database = true;
 	}
@@ -247,5 +255,54 @@ public class Assignment {
 			insert();
 			return;
 		}
+		
+		if ( !course_dirty && !title_dirty && !description_dirty
+				&& !time_estimate_dirty && !time_worked_dirty 
+				&& !time_remaining_dirty && !assigned_dirty && !due_dirty
+				&& !completed_dirty ) return;
+		
+		Connection connection = repo.getDatabase().getConnection();
+		PreparedStatement stmt;
+		
+		stmt = connection.prepareStatement( 
+				"UPDATE assignments \n" +
+				"SET course_id = ?, title = ?, time_estimate = ?, \n" +
+				"    time_worked = ?, time_remaining = ?, assigned = ?, \n" +
+				"    due = ?, completed = ?" +
+				(description_dirty ? ", description = ? \n" : " \n") +
+				"WHERE id = ?" );
+		
+		stmt.setInt( 1, course.getId() );
+		stmt.setString( 2, title );
+		stmt.setInt( 3, time_estimate );
+		stmt.setInt( 4, time_worked );
+		stmt.setInt( 5, time_remaining );
+		stmt.setDate( 6, ( assigned == null ?
+				null : new java.sql.Date( assigned.getTime() ) ) );
+		stmt.setDate( 7, ( null == due ? null : 
+			new java.sql.Date( due.getTime() ) ) );
+		stmt.setDate( 8, ( null == completed ? null : 
+			new java.sql.Date( completed.getTime() ) ) );
+		
+		if ( description_dirty ) {
+			Clob clob = connection.createClob();
+			clob.setString( 1, description );
+			
+			stmt.setClob( 9, clob );
+			stmt.setInt( 10, id );
+		} else {
+			stmt.setInt( 9, id );
+		}
+		
+		stmt.execute();
+		
+		this.course_dirty = false;
+		this.description_dirty = false;
+		this.title_dirty = false;
+		this.time_estimate_dirty = false;
+		this.time_worked_dirty = false;
+		this.assigned_dirty = false;
+		this.due_dirty = false;
+		this.completed_dirty = false;
 	}
 }
